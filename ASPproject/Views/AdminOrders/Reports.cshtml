@@ -1,0 +1,155 @@
+﻿@{
+    ViewData["Title"] = "Order Reports";
+}
+
+<h2>View Reports</h2>
+
+<div>
+    <!-- Dropdown for report type -->
+    <label for="reportTypeSelect">Select Type of Report:</label>
+    <select id="reportTypeSelect" class="form-control">
+        <option value="graph">Reports by Graph</option>
+        <option value="table">Reports by Table</option>
+    </select>
+
+    <!-- Dropdown for categories -->
+    <div id="categoryContainer" style="padding-top: 10px;">
+        <label for="categorySelect">Select Category:</label>
+        <select id="categorySelect" class="form-control">
+            <!-- Initially populated by graph categories -->
+            <option value="CustomerName">Customer Name</option>
+            <option value="FlooringType">Flooring Type</option>
+            <option value="Price">Sales</option>
+        </select>
+    </div>
+</div>
+
+<!-- Graph section -->
+<div id="graphContainer" style="width: 80%; margin: 0 auto; padding-top: 20px;">
+    <canvas id="reportChart"></canvas>
+</div>
+
+<!-- Table section -->
+<div id="tableContainer" style="display:none; padding-top: 20px;">
+    <h3>Total Sales by Flooring Type</h3>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Flooring Type</th>
+                <th>Total Sales</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody">
+            <!-- Rows will be dynamically added here -->
+        </tbody>
+    </table>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const ctx = document.getElementById('reportChart').getContext('2d');
+        let chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Orders',
+                    data: [],
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // Handle report type dropdown change
+        document.getElementById('reportTypeSelect').addEventListener('change', function() {
+            const reportType = this.value;
+            const categoryContainer = document.getElementById('categoryContainer');
+            const graphContainer = document.getElementById('graphContainer');
+            const tableContainer = document.getElementById('tableContainer');
+
+            if (reportType === 'graph') {
+                categoryContainer.style.display = 'block';
+                graphContainer.style.display = 'block';
+                tableContainer.style.display = 'none';
+                populateGraphCategories();
+            } else if (reportType === 'table') {
+                categoryContainer.style.display = 'block';
+                graphContainer.style.display = 'none';
+                tableContainer.style.display = 'block';
+                populateTableCategories();
+            }
+        });
+
+        // Populate graph categories
+        function populateGraphCategories() {
+            const categorySelect = document.getElementById('categorySelect');
+            categorySelect.innerHTML = `
+                        <option value="CustomerName">Customer Name</option>
+                        <option value="FlooringType">Flooring Type</option>
+                        <option value="Price">Sales</option>
+                    `;
+        }
+
+        // Populate table categories
+        function populateTableCategories() {
+            const categorySelect = document.getElementById('categorySelect');
+            categorySelect.innerHTML = `
+                        <option value="TotalSales">Total Sales</option>
+                        <option value="TotalSquareFeet">Total Square Feet Sold</option>
+                    `;
+        }
+
+        // Fetch data when a category is selected
+        document.getElementById('categorySelect').addEventListener('change', function() {
+            const category = this.value;
+            const reportType = document.getElementById('reportTypeSelect').value;
+
+            if (reportType === 'graph') {
+                fetch(`/AdminOrders/GetReportData?category=${category}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const labels = data.map(item => item.label);
+                        const counts = data.map(item => item.count);
+
+                        chart.data.labels = labels;
+                        chart.data.datasets[0].data = counts;
+                        chart.update();
+                    });
+            } else if (reportType === 'table') {
+                if (category === 'TotalSales') {
+                    fetch(`/AdminOrders/GetSalesData`)
+                        .then(response => response.json())
+                        .then(data => {
+                            const tableBody = document.getElementById('tableBody');
+                            tableBody.innerHTML = '';
+                            data.forEach(item => {
+                                const row = `<tr><td>${item.flooringType}</td><td>${item.totalSales}</td></tr>`;
+                                tableBody.innerHTML += row;
+                            });
+                        });
+                } else if (reportType === 'table') {
+                    fetch(`/AdminOrders/GetTableReportData`)
+                        .then(response => response.json())
+                        .then(data => {
+                            const tableBody = document.getElementById('tableBody');
+                            tableBody.innerHTML = '';
+                            data.forEach(item => {
+                                const row = `<tr><td>${item.flooringType}</td><td>${item.totalSquareFeet}</td></tr>`;
+                                tableBody.innerHTML += row;
+                            });
+                        });
+                }
+            }
+        });
+    </script>
+}

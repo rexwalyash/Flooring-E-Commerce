@@ -1,0 +1,73 @@
+html {
+  font-size: 14px;
+}
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+body {
+    background-color: #f8f9fa; /* Light background */
+    font-family: 'Arial', sans-serif;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+.container {
+    flex: 1; /* Ensures the main content takes available space */
+}
+
+
+/* Centering the card and adding shadow */
+.login-logout-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: white;
+    padding: 20px;
+}
+
+/* Styling the navigation tabs */
+.nav-tabs .nav-link {
+    color: #007bff;
+    font-weight: bold;
+    padding: 10px 60px;
+    border: none;
+}
+
+    .nav-tabs .nav-link.active {
+        color: #fff;
+        background-color: #007bff;
+        border-radius: 8px 8px 0 0;
+    }
+
+    /* Button hover effects */
+    .nav-tabs .nav-link:hover {
+        background-color: #f1f1f1;
+        border-radius: 8px;
+    }
+
+/* Card body padding */
+.card-body {
+    background-color: #f8f9fa;
+    border-radius: 0 0 8px 8px;
+    padding: 30px;
+}
+
+/* Spacing for the form container */
+.my-4 {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+

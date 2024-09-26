@@ -1,0 +1,132 @@
+﻿@model IEnumerable<ASPproject.Areas.Identity.Data.Product>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .product-container {
+            margin: 50px auto;
+            max-width: 1200px;
+        }
+
+        .product-card {
+            margin-bottom: 30px;
+            text-align: center;
+            transition: transform 0.2s;
+            border: 1px solid #dee2e6;
+            border-radius: .375rem;
+            background-color: #ffffff;
+        }
+
+            .product-card:hover {
+                transform: scale(1.05);
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            }
+
+            .product-card img {
+                display: block;
+                max-width: 100%;
+                height: auto;
+                border-bottom: 1px solid #dee2e6;
+            }
+
+            .product-card h4, .product-card h5 {
+                margin: 15px 0;
+                font-size: 1.1rem;
+                color: #343a40;
+            }
+
+            .product-card p {
+                font-size: 1rem;
+                color: #495057;
+            }
+
+        .start-shopping {
+            margin-top: 50px;
+            text-align: center;
+        }
+
+            .start-shopping .btn {
+                padding: 10px 20px;
+                font-size: 1.2rem;
+                border-radius: .375rem;
+                background-color: #007bff;
+                color: #ffffff;
+                transition: background-color 0.2s;
+            }
+
+                .start-shopping .btn:hover {
+                    background-color: #0056b3;
+                    text-decoration: none;
+                }
+    </style>
+</head>
+<body>
+    <div class="container product-container">
+        <div class="row">
+            @foreach (var product in Model)
+            {
+                <div class="col-md-4">
+                    <div class="product-card">
+                        <iframe src="~/Photos/@product.ImageFileName" scrolling="no" frameborder="0"></iframe>
+                        <div class="card-body">
+                            <h4>@product.Brand</h4>
+                            <h5>@product.Name</h5>
+                            <p>Price: $@product.price</p>
+                            <button class="btn btn-success add-to-cart">Add to Cart</button> <!-- Add to Cart Button -->
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="start-shopping">
+            <button id="proceedToCheckout" class="btn btn-primary">Proceed with Shopping</button>
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- JavaScript Logic for Cart and Passing Selected Product -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const cart = [];
+            const addToCartButtons = document.querySelectorAll('.add-to-cart');
+
+            addToCartButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const productCard = this.closest('.product-card');
+                    const productName = productCard.querySelector('h5').innerText;
+                    const productBrand = productCard.querySelector('h4').innerText;
+                    const productPrice = productCard.querySelector('p').innerText.match(/\d+(\.\d+)?/)[0]; // Extracting price
+
+                    cart.push({ name: productName, brand: productBrand, price: productPrice });
+                    this.innerText = "Added"; // Change button text to "Added"
+                    this.disabled = true; // Disable the button
+                });
+            });
+
+            const proceedButton = document.getElementById('proceedToCheckout');
+
+            proceedButton.addEventListener('click', function() {
+                if (cart.length > 0) {
+                    const selectedProduct = cart[0]; // Assuming single selection for now
+                    const queryString = `flooring=${encodeURIComponent(selectedProduct.name)}&brand=${encodeURIComponent(selectedProduct.brand)}&price=${encodeURIComponent(selectedProduct.price)}`;
+                    window.location.href = `/Purchase/PlaceOrder?${queryString}`;
+                } else {
+                    alert('Your cart is empty!');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

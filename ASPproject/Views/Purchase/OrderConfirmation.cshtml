@@ -1,0 +1,74 @@
+﻿@model ASPproject.Areas.Identity.Data.OrderFormViewModel
+
+<div class="container mt-5">
+    <div class="text-center">
+        <h2>Thanks for shopping with us!</h2>
+        <p>Your order is successfully placed.</p>
+    </div>
+
+    <div class="card mt-4">
+        <div class="card-header bg-success text-white">
+            <h4 class="mb-0">Order Receipt</h4>
+        </div>
+        <div class="card-body">
+            <div class="row mb-3">
+                <div class="col-md-4"><strong>Order Number:</strong></div>
+                <div class="col-md-8">@Model.OrderNumber</div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-4"><strong>Username:</strong></div>
+                <div class="col-md-8">@Model.FullName</div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-4"><strong>Email Address:</strong></div>
+                <div class="col-md-8">@Model.UserName</div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-4"><strong>Phone Number:</strong></div>
+                <div class="col-md-8">@Model.PhoneNumber</div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-4"><strong>Address:</strong></div>
+                <div class="col-md-8">@Model.Address</div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-4"><strong>Flooring Type:</strong></div>
+                <div class="col-md-8">@Model.SelectedFlooring</div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-4"><strong>Installation Date:</strong></div>
+                <div class="col-md-8">@Model.InstallationDate.ToString("MMMM dd, yyyy")</div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-4"><strong>Square Feet:</strong></div>
+                <div class="col-md-8">@Model.SquareFeet</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-4">
+        <a class="btn btn-primary" asp-controller="Purchase" asp-action="Index">
+            Continue Shopping
+        </a>
+    </div>
+</div>
+
+<!-- Optional: Add some styling for better presentation -->
+<style>
+    .container {
+        max-width: 800px;
+    }
+    .card {
+        border: 1px solid #ddd;
+    }
+    .row {
+        margin-bottom: 10px;
+    }
+</style>

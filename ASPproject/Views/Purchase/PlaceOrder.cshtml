@@ -1,0 +1,140 @@
+﻿@using ASPproject.Areas.Identity.Data
+@model OrderFormViewModel
+
+<html>
+<head>
+    <title>Place Your Order</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <style>
+        .form-container {
+            margin: 50px auto;
+            max-width: 600px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+            .form-container h3 {
+                margin-bottom: 20px;
+            }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="form-container">
+            <h3>Order Form</h3>
+            <form asp-action="PlaceOrder" method="post">
+
+                <!-- Order Number -->
+                <div class="form-group">
+                    <label for="OrderNumber">Order Number</label>
+                    <input class="form-control" value="@Model.OrderNumber" asp-for="OrderNumber" readonly />
+                </div>
+
+                <div class="form-group">
+                    <label for="Username">Username</label>
+                    <input class="form-control" value="@Model.UserName" asp-for="UserName" readonly />
+                </div>
+
+                <!-- Full Name -->
+                <div class="form-group">
+                    <label for="FullName">Full Name</label>
+                    <input class="form-control" asp-for="FullName" required />
+                    <span asp-validation-for="FullName" class="text-danger"></span>
+                </div>
+
+                <!-- Phone Number -->
+                <div class="form-group">
+                    <label for="PhoneNumber">Phone Number</label>
+                    <input class="form-control" asp-for="PhoneNumber" required />
+                    <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                </div>
+
+                <!-- Address -->
+                <div class="form-group">
+                    <label for="Address">Address</label>
+                    <input class="form-control" asp-for="Address" required />
+                    <span asp-validation-for="Address" class="text-danger"></span>
+                </div>
+
+                <!-- Flooring Type (Auto-filled with Product Name + Brand) -->
+                <div class="form-group">
+                    <label for="FlooringType">Flooring Type</label>
+                    <input type="text" id="FlooringType" class="form-control" name="FlooringType" readonly />
+                </div>
+
+                <!-- Square Feet -->
+                <div class="form-group">
+                    <label for="SquareFeet">Square Feet</label>
+                    <input class="form-control" asp-for="SquareFeet" required />
+                    <span asp-validation-for="SquareFeet" class="text-danger"></span>
+                </div>
+
+                <!-- Installation Date -->
+                <div class="form-group">
+                    <label for="InstallationDate">Installation Date</label>
+                    <input class="form-control" asp-for="InstallationDate" required />
+                    <span asp-validation-for="InstallationDate" class="text-danger"></span>
+                </div>
+
+                <!-- Total Price -->
+                <div class="form-group">
+                    <label for="TotalPrice">Total Price</label>
+                    <input class="form-control" asp-for="TotalPrice" readonly />
+                </div>
+
+                <input type="hidden" asp-for="SelectedFlooring" name="SelectedFlooring" />
+
+                <!-- Hidden input to store the price -->
+                <input type="hidden" id="FlooringPrice" name="FlooringPrice" />
+
+                <button type="submit" class="btn btn-primary w-100">Place Order</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Get query parameters for product name, brand, and price
+            const urlParams = new URLSearchParams(window.location.search);
+            const flooringName = urlParams.get('flooring');
+            const brandName = urlParams.get('brand');
+            const price = urlParams.get('price');  // Get the price from the query string
+
+            // Combine product name and brand for flooring type input
+            const flooringTypeInput = document.getElementById('FlooringType');
+            const flooringPriceInput = document.getElementById('FlooringPrice');
+            const selectedFlooring = document.getElementById('SelectedFlooring');
+
+            if (flooringName && brandName) {
+                flooringTypeInput.value = `${flooringName} (${brandName})`;  // e.g., "Hardwood Flooring (Armstrong)"
+                selectedFlooring.value = flooringName;  // Only pass the flooring name to the database
+            }
+
+            if (price) {
+                flooringPriceInput.value = price;  // Set the hidden price value
+            }
+
+            // Total price calculation based on square feet and flooring price
+            const squareFeetInput = document.getElementById('SquareFeet');
+            const totalPriceInput = document.getElementById('TotalPrice');
+
+            function calculateTotalPrice() {
+                const squareFeet = squareFeetInput.value;
+                const flooringPrice = parseFloat(flooringPriceInput.value);
+
+                if (flooringPrice && squareFeet) {
+                    const total = (flooringPrice * squareFeet).toFixed(2);
+                    totalPriceInput.value = total;
+                } else {
+                    totalPriceInput.value = "0.00";
+                }
+            }
+
+            // Trigger total price calculation on square feet input
+            squareFeetInput.addEventListener('input', calculateTotalPrice);
+        });
+    </script>
+</body>
+</html>
